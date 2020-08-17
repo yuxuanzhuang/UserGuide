@@ -93,8 +93,7 @@ pygments_style = 'default'
 todo_include_todos = True
 
 mathjax_path = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML'
-
-site_url = "https://www.yuxuanzhuang.github.io/UserGuide"
+site_url = "https://yuxuanzhuang.github.io/UserGuide"
 html_use_opensearch = 'https://userguide.mdanalysis.org'
 
 # Add any paths that contain templates here, relative to this directory.
