@@ -161,7 +161,7 @@
 <li class="toctree-l1"><a class="reference internal" href="examples/analysis/README.html#dimension-reduction">Dimension reduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/analysis/README.html#polymers-and-membranes">Polymers and membranes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/analysis/custom_trajectory_analysis.html">Writing your own trajectory analysis</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples/analysis/custom_parallel_analysis.html">How to run your analysis parallelly</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/analysis/custom_parallel_analysis.html">Parallelizing analysis</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Advanced</span></p>
 <ul>
@@ -353,13 +353,13 @@ of a <a class="reference external" href="https://www.mdanalysis.org/docs/documen
 
 <span class="gp">In [16]: </span><span class="n">universe</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">positions</span>
 <span class="gh">Out[16]: </span><span class="go"></span>
-<span class="go">array([[0.7982093 , 0.79947084, 0.33194983],</span>
-<span class="go">       [0.47640657, 0.63780874, 0.71375847],</span>
-<span class="go">       [0.62744427, 0.9233566 , 0.821438  ],</span>
+<span class="go">array([[0.1604448 , 0.45017976, 0.9554901 ],</span>
+<span class="go">       [0.3619854 , 0.9008008 , 0.45368835],</span>
+<span class="go">       [0.41028693, 0.1401933 , 0.0813366 ],</span>
 <span class="go">       ...,</span>
-<span class="go">       [0.12295626, 0.5096475 , 0.3698347 ],</span>
-<span class="go">       [0.74171066, 0.7245674 , 0.2782672 ],</span>
-<span class="go">       [0.8891739 , 0.74766916, 0.61842453]], dtype=float32)</span>
+<span class="go">       [0.5141493 , 0.7480281 , 0.64527696],</span>
+<span class="go">       [0.66466093, 0.27645382, 0.91456825],</span>
+<span class="go">       [0.9141107 , 0.8815891 , 0.2577924 ]], dtype=float32)</span>
 </pre></div>
 </div>
 <p>or they can be directly passed in when creating a Universe.</p>
@@ -367,13 +367,13 @@ of a <a class="reference external" href="https://www.mdanalysis.org/docs/documen
 
 <span class="gp">In [18]: </span><span class="n">universe2</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">positions</span>
 <span class="gh">Out[18]: </span><span class="go"></span>
-<span class="go">array([[0.7982093 , 0.79947084, 0.33194983],</span>
-<span class="go">       [0.47640657, 0.63780874, 0.71375847],</span>
-<span class="go">       [0.62744427, 0.9233566 , 0.821438  ],</span>
+<span class="go">array([[0.1604448 , 0.45017976, 0.9554901 ],</span>
+<span class="go">       [0.3619854 , 0.9008008 , 0.45368835],</span>
+<span class="go">       [0.41028693, 0.1401933 , 0.0813366 ],</span>
 <span class="go">       ...,</span>
-<span class="go">       [0.12295626, 0.5096475 , 0.3698347 ],</span>
-<span class="go">       [0.74171066, 0.7245674 , 0.2782672 ],</span>
-<span class="go">       [0.8891739 , 0.74766916, 0.61842453]], dtype=float32)</span>
+<span class="go">       [0.5141493 , 0.7480281 , 0.64527696],</span>
+<span class="go">       [0.66466093, 0.27645382, 0.91456825],</span>
+<span class="go">       [0.9141107 , 0.8815891 , 0.2577924 ]], dtype=float32)</span>
 </pre></div>
 </div>
 </div>
