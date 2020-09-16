@@ -162,7 +162,6 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#Other-possible-parallelism-approaches-for-multiple-analyses">Other possible parallelism approaches for multiple analyses</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#See-Also">See Also</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#References">References</a></li>
 </ul>
 </li>
 </ul>
@@ -489,7 +488,6 @@ div.rendered_html tbody tr:hover {
 <span></span><span class="kn">import</span> <span class="nn">MDAnalysis</span> <span class="k">as</span> <span class="nn">mda</span>
 <span class="kn">from</span> <span class="nn">MDAnalysisData.adk_equilibrium</span> <span class="kn">import</span> <span class="n">fetch_adk_equilibrium</span>
 
-<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">Image</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
@@ -655,7 +653,7 @@ your own multiple-core laptops/desktops to distributed clusters in the HPC cente
 <p>Below we use <code class="docutils literal notranslate"><span class="pre">Pool</span></code> from <code class="docutils literal notranslate"><span class="pre">multiprocessing</span></code> as a context manager, we can define how many cores (or workers) we want to use by <code class="docutils literal notranslate"><span class="pre">Pool(n_jobs)</span></code>. Then we can map our analysis method <code class="docutils literal notranslate"><span class="pre">radgyr_per_frame</span></code> with the parameters needed with <code class="docutils literal notranslate"><span class="pre">partial</span></code>. Note we do not include <code class="docutils literal notranslate"><span class="pre">frame_index</span></code> inside partial, because <code class="docutils literal notranslate"><span class="pre">frame_index</span></code> is the variable that is iterated to create a list of jobs.</p>
 <p>The downside of <code class="docutils literal notranslate"><span class="pre">multiprocessing</span></code> is that it is mostly focused on single-machine multicore parallelism (without extra manager). It is hard to operate on multimachine conditions (we use <code class="docutils literal notranslate"><span class="pre">dask</span></code> instead)</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -666,7 +664,7 @@ your own multiple-core laptops/desktops to distributed clusters in the HPC cente
 </div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -681,7 +679,7 @@ your own multiple-core laptops/desktops to distributed clusters in the HPC cente
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">result</span></code> will be a list of arrays containing the result for each frame. Finally the results can be plotted along time.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -713,7 +711,7 @@ waiting for submission (<code class="docutils literal notranslate"><span class="
 <p>The API of Dask is similar to <code class="docutils literal notranslate"><span class="pre">multiprocessing</span></code>. It also creates a pool of workers for your single machine with the given resources.</p>
 <p>Note: The threaded scheduler in dask (similar to <code class="docutils literal notranslate"><span class="pre">threading</span></code> in python) should not be used as it will mess up with the state (timestep) of the trajectory.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -724,19 +722,19 @@ waiting for submission (<code class="docutils literal notranslate"><span class="
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&lt;dask.config.set at 0x7f1021596760&gt;
+&lt;dask.config.set at 0x7f76fdbcb3a0&gt;
 </pre></div></div>
 </div>
 <p>Below is how you can utilize <code class="docutils literal notranslate"><span class="pre">dask.distributed</span></code> module to build a local cluster.</p>
 <p>Note: this is not really needed for your laptop/desktop. Using dask.distributed may even slow down the performance, but it provides a diagnostic dashboard that can provide valuable insight on performance and progress.</p>
 <p>See limitations here: <a class="reference external" href="https://distributed.dask.org/en/latest/limitations.html">https://distributed.dask.org/en/latest/limitations.html</a></p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -748,7 +746,7 @@ waiting for submission (<code class="docutils literal notranslate"><span class="
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -757,7 +755,7 @@ waiting for submission (<code class="docutils literal notranslate"><span class="
 <td style="vertical-align: top; border: 0px solid white">
 <h3 style="text-align: left;">Client</h3>
 <ul style="text-align: left; list-style: none; margin: 0; padding: 0;">
-  <li><b>Scheduler: </b>tcp://127.0.0.1:45767</li>
+  <li><b>Scheduler: </b>tcp://127.0.0.1:36173</li>
   <li><b>Dashboard: </b><a href='http://127.0.0.1:8787/status' target='_blank'>http://127.0.0.1:8787/status</a></li>
 </ul>
 </td>
@@ -774,7 +772,7 @@ waiting for submission (<code class="docutils literal notranslate"><span class="
 </div>
 <p>First we have to create a list of jobs and transform them with <code class="docutils literal notranslate"><span class="pre">dask.delayed()</span></code> so they can be processed by Dask.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -789,7 +787,7 @@ waiting for submission (<code class="docutils literal notranslate"><span class="
 </div>
 <p>Then we simply use <code class="docutils literal notranslate"><span class="pre">dask.compute()</span></code> to get a list of ordered results.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -798,7 +796,7 @@ waiting for submission (<code class="docutils literal notranslate"><span class="
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -823,7 +821,7 @@ waiting for submission (<code class="docutils literal notranslate"><span class="
 <p>We can also use the old <code class="docutils literal notranslate"><span class="pre">radgyr</span></code> function because <code class="docutils literal notranslate"><span class="pre">dask</span></code> is more flexible on the input args.</p>
 <p>Note: <code class="docutils literal notranslate"><span class="pre">protein</span></code> will change its state during the trajectory iteration, so the processes are always aware which timestep the trajectory is in and change the <code class="docutils literal notranslate"><span class="pre">protein</span></code> (e.g. positions) accordingly.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -837,7 +835,7 @@ waiting for submission (<code class="docutils literal notranslate"><span class="
 </div>
 <p>Then we simply use <code class="docutils literal notranslate"><span class="pre">dask.compute()</span></code> to get a list of ordered results.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -846,7 +844,7 @@ waiting for submission (<code class="docutils literal notranslate"><span class="
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -869,53 +867,22 @@ waiting for submission (<code class="docutils literal notranslate"><span class="
 </div>
 </div>
 <p>We can also use Dask dashboard (with dask.distributed.Client) to examine how jobs are distributed along all the workers. So each green bar below represents a single-frame <code class="docutils literal notranslate"><span class="pre">radgyr</span></code>.</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">i</span> <span class="o">=</span> <span class="n">Image</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s1">&#39;../images/parallel_analysis/per_frame_dask.png&#39;</span><span class="p">,</span><span class="n">width</span><span class="o">=</span><span class="mi">700</span><span class="p">)</span>
-<span class="n">i</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
-</pre></div>
-</div>
-<div class="output_area docutils container">
-<a class="reference internal image-reference" href="../../_images/examples_analysis_custom_parallel_analysis_35_0.png"><img alt="../../_images/examples_analysis_custom_parallel_analysis_35_0.png" src="../../_images/examples_analysis_custom_parallel_analysis_35_0.png" style="width: 700px;" /></a>
-</div>
-</div>
-</div>
+<center><div style="width: 850px; text-align: center;"><p><img alt="Dask task stream" src="../../_images/per_frame_dask.png" /></p>
+</div></center></div>
 </div>
 <div class="section" id="Parallelization-in-a-split-apply-combine-fashion">
 <h2>Parallelization in a split-apply-combine fashion<a class="headerlink" href="#Parallelization-in-a-split-apply-combine-fashion" title="Permalink to this headline">¶</a></h2>
 <p>The aforementioned per-frame approach should normally be <strong>avoided</strong> because in <strong>each</strong> task, all the attributes (<code class="docutils literal notranslate"><span class="pre">AtomGroup</span></code>, <code class="docutils literal notranslate"><span class="pre">Universe</span></code>, and etc) need to be pickled. This might even takes more time than your lightweight analysis! Besides, e.g. in dask, a huge amount of time is needed overhead to build a comprehensive dask graph with thousands of tasks.</p>
 <p>So a simple split-apply-combine scheme for parallel trajectory analysis should normally be applied (See the figure below)–the trajectory is split into blocks, analysis is performed separately and in parallel on each block (“apply”), then results from each block are gathered and combined.</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+<center><div style="width: 650px; text-align: center;"><p><img alt="Split-apply-combine approach" src="../../_images/dask_sac.png" /></p>
+</div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Image</span> <span class="kn">from</span> <span class="p">(</span><span class="o">&lt;</span><span class="n">a</span> <span class="n">data</span><span class="o">-</span><span class="n">cite</span><span class="o">=</span><span class="s2">&quot;fan_pmda_2019&quot;</span> <span class="n">href</span><span class="o">=</span><span class="s2">&quot;https://doi.org/10.25080/Majora-7ddc1dd1-013&quot;</span><span class="o">&gt;</span><span class="n">Fan</span> <span class="n">et</span> <span class="n">al</span><span class="o">.</span><span class="p">,</span> <span class="mi">2019</span><span class="o">&lt;/</span><span class="n">a</span><span class="o">&gt;</span><span class="p">)</span> <span class="n">used</span> <span class="n">under</span> <span class="n">CC</span><span class="o">-</span><span class="n">BY</span> <span class="n">license</span>
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">i</span> <span class="o">=</span> <span class="n">Image</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s1">&#39;../images/parallel_analysis/dask_sac.png&#39;</span><span class="p">,</span><span class="n">width</span><span class="o">=</span><span class="mi">700</span><span class="p">)</span>
-<span class="n">i</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
-</pre></div>
-</div>
-<div class="output_area docutils container">
-<a class="reference internal image-reference" href="../../_images/examples_analysis_custom_parallel_analysis_37_0.png"><img alt="../../_images/examples_analysis_custom_parallel_analysis_37_0.png" src="../../_images/examples_analysis_custom_parallel_analysis_37_0.png" style="width: 700px;" /></a>
-</div>
-</div>
-<p>We will show a simple illustration of split-apply-combine approach with dask below:</p>
+</center><p>We will show a simple illustration of split-apply-combine approach with dask below:</p>
 <div class="section" id="Block-analysis-function">
 <h3>Block analysis function<a class="headerlink" href="#Block-analysis-function" title="Permalink to this headline">¶</a></h3>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -934,7 +901,7 @@ waiting for submission (<code class="docutils literal notranslate"><span class="
 <h3>Split the trajectory<a class="headerlink" href="#Split-the-trajectory" title="Permalink to this headline">¶</a></h3>
 <p>This is a very simple way to split the trajectory, sometime it is not really balanced (e.g. the last block).</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -948,7 +915,7 @@ waiting for submission (<code class="docutils literal notranslate"><span class="
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -957,7 +924,7 @@ waiting for submission (<code class="docutils literal notranslate"><span class="
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -980,7 +947,7 @@ waiting for submission (<code class="docutils literal notranslate"><span class="
 <div class="section" id="Apply-the-analysis-per-block">
 <h3>Apply the analysis per block<a class="headerlink" href="#Apply-the-analysis-per-block" title="Permalink to this headline">¶</a></h3>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -993,7 +960,7 @@ waiting for submission (<code class="docutils literal notranslate"><span class="
 </div>
 <p>By <code class="docutils literal notranslate"><span class="pre">visualize()</span></code> we can confirm that the trajectory is split into a few blocks instead of ~4000 jobs.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1002,7 +969,7 @@ waiting for submission (<code class="docutils literal notranslate"><span class="
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -1010,7 +977,7 @@ waiting for submission (<code class="docutils literal notranslate"><span class="
 </div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1022,7 +989,7 @@ waiting for submission (<code class="docutils literal notranslate"><span class="
 <div class="section" id="Combine-the-results">
 <h3>Combine the results<a class="headerlink" href="#Combine-the-results" title="Permalink to this headline">¶</a></h3>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1031,7 +998,7 @@ waiting for submission (<code class="docutils literal notranslate"><span class="
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1054,32 +1021,15 @@ waiting for submission (<code class="docutils literal notranslate"><span class="
 </div>
 </div>
 <p>If you look at the Dask dashboard (with dask.distributed.Client) this time, you will see each green bar below reprsents a per-block analysis for <code class="docutils literal notranslate"><span class="pre">radgyr</span></code>.</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">i</span> <span class="o">=</span> <span class="n">Image</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s1">&#39;../images/parallel_analysis/block_dask.png&#39;</span><span class="p">,</span><span class="n">width</span><span class="o">=</span><span class="mi">700</span><span class="p">)</span>
-<span class="n">i</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
-</pre></div>
-</div>
-<div class="output_area docutils container">
-<a class="reference internal image-reference" href="../../_images/examples_analysis_custom_parallel_analysis_54_0.png"><img alt="../../_images/examples_analysis_custom_parallel_analysis_54_0.png" src="../../_images/examples_analysis_custom_parallel_analysis_54_0.png" style="width: 700px;" /></a>
-</div>
-</div>
-</div>
+<center><div style="width: 650px; text-align: center;"><p><img alt="Dask task stream with blocks" src="../../_images/block_dask.png" /></p>
+</div></center></div>
 </div>
 <div class="section" id="Other-possible-parallelism-approaches-for-multiple-analyses">
 <h2>Other possible parallelism approaches for multiple analyses<a class="headerlink" href="#Other-possible-parallelism-approaches-for-multiple-analyses" title="Permalink to this headline">¶</a></h2>
 <p>In real life, you may also want to perform multiple analyses (or analyzing multiple trajectories), you can use some high-level parallelism, i.e. running all the serial analyses in parallel.</p>
 <p>Here we use <a class="reference external" href="https://joblib.readthedocs.io/en/latest/">joblib</a>. It is implemented on <code class="docutils literal notranslate"><span class="pre">multiprocessing</span></code> and provides lightweight pipelining in Python. Comparing to <code class="docutils literal notranslate"><span class="pre">multiprocessing</span></code>, it has a simple API and convenient persistence of cached results.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[40]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1090,7 +1040,7 @@ waiting for submission (<code class="docutils literal notranslate"><span class="
 </div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[41]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1101,7 +1051,7 @@ waiting for submission (<code class="docutils literal notranslate"><span class="
 </div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[42]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1112,7 +1062,7 @@ waiting for submission (<code class="docutils literal notranslate"><span class="
 </div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[43]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[30]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1137,7 +1087,7 @@ waiting for submission (<code class="docutils literal notranslate"><span class="
 </div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[44]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[31]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1147,7 +1097,7 @@ waiting for submission (<code class="docutils literal notranslate"><span class="
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[45]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[32]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1172,14 +1122,7 @@ waiting for submission (<code class="docutils literal notranslate"><span class="
 </div>
 <div class="section" id="See-Also">
 <h2>See Also<a class="headerlink" href="#See-Also" title="Permalink to this headline">¶</a></h2>
-<p>The parallel version of MDAnalysis is still under development. For existing solution and some implemented parallel analysis, go to PMDA. PMDA (<a class="bibtex reference internal" href="../../references.html#fan-pmda-2019" id="id4">[SFPG+19]</a>) applies the aforementioned split-apply-combine scheme with dask. In the future, it may provide a framework that consolidates all the mentioned parallel conditions.</p>
-</div>
-<div class="section" id="References">
-<h2>References<a class="headerlink" href="#References" title="Permalink to this headline">¶</a></h2>
-<p>[1] Oliver Beckstein, Elizabeth J. Denning, Juan R. Perilla, and Thomas B. Woolf. Zipping and Unzipping of Adenylate Kinase: Atomistic Insights into the Ensemble of Open↔Closed Transitions. Journal of Molecular Biology, 394(1):160–176, November 2009. 00107. URL: <a class="reference external" href="https://linkinghub.elsevier.com/retrieve/pii/S0022283609011164">https://linkinghub.elsevier.com/retrieve/pii/S0022283609011164</a>, doi:10.1016/j.jmb.2009.09.009.</p>
-<p>[2] Richard J. Gowers, Max Linke, Jonathan Barnoud, Tyler J. E. Reddy, Manuel N. Melo, Sean L. Seyler, Jan Domański, David L. Dotson, Sébastien Buchoux, Ian M. Kenney, and Oliver Beckstein. MDAnalysis: A Python Package for the Rapid Analysis of Molecular Dynamics Simulations. Proceedings of the 15th Python in Science Conference, pages 98–105, 2016. 00152. URL: <a class="reference external" href="https://conference.scipy.org/proceedings/scipy2016/oliver_beckstein.html">https://conference.scipy.org/proceedings/scipy2016/oliver_beckstein.html</a>, doi:10.25080/Majora-629e541a-00e.</p>
-<p>[3] Naveen Michaud-Agrawal, Elizabeth J. Denning, Thomas B. Woolf, and Oliver Beckstein. MDAnalysis: A toolkit for the analysis of molecular dynamics simulations. Journal of Computational Chemistry, 32(10):2319–2327, July 2011. 00778. URL: <a class="reference external" href="http://doi.wiley.com/10.1002/jcc.21787">http://doi.wiley.com/10.1002/jcc.21787</a>, doi:10.1002/jcc.21787.</p>
-<p>[4] Shujie Fan, Max Linke, Ioannis Paraskevakos, Richard J. Gowers, Michael Gecht, and Oliver Beckstein. PMDA - Parallel Molecular Dynamics Analysis. Proceedings of the 18th Python in Science Conference, pages 134–142, 2019. URL: <a class="reference external" href="https://conference.scipy.org/proceedings/scipy2019/shujie_fan.html">https://conference.scipy.org/proceedings/scipy2019/shujie_fan.html</a>, doi:10.25080/Majora-7ddc1dd1-013</p>
+<p>The parallel version of MDAnalysis is still under development. For existing solution and some implemented parallel analysis, go to <a class="reference external" href="https://www.mdanalysis.org/pmda/">PMDA</a>. PMDA (<a class="bibtex reference internal" href="../../references.html#fan-pmda-2019" id="id4">[SFPG+19]</a>) applies the aforementioned split-apply-combine scheme with dask. In the future, it may provide a framework that consolidates all the mentioned parallel conditions.</p>
 </div>
 </div>
 
