@@ -45,9 +45,7 @@
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Standard residues in MDAnalysis selections" href="../../standard_selections.html" />
-    <link rel="prev" title="Writing your own trajectory analysis" href="custom_trajectory_analysis.html" /> 
+    <link rel="search" title="Search" href="../../search.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -130,7 +128,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../formats/format_reference.html">Format reference</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Analysis</span></p>
-<ul class="current">
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="README.html">Analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="README.html#alignments-and-rms-fitting">Alignments and RMS fitting</a></li>
 <li class="toctree-l1"><a class="reference internal" href="README.html#distances-and-contacts">Distances and contacts</a></li>
@@ -140,31 +138,7 @@
 <li class="toctree-l1"><a class="reference internal" href="README.html#dimension-reduction">Dimension reduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="README.html#polymers-and-membranes">Polymers and membranes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="custom_trajectory_analysis.html">Writing your own trajectory analysis</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Parallelizing analysis</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#Backgroud">Backgroud</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#Loading-files">Loading files</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#Radius-of-gyration">Radius of gyration</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#Serial-Analysis">Serial Analysis</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#Parallelization-in-a-simple-per-frame-fashion">Parallelization in a simple per-frame fashion</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#Frame-wise-form-of-the-function">Frame-wise form of the function</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#Parallelization-with-multiprocessing">Parallelization with multiprocessing</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#Parallelization-with-dask">Parallelization with dask</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#Parallelization-in-a-split-apply-combine-fashion">Parallelization in a split-apply-combine fashion</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#Block-analysis-function">Block analysis function</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#Split-the-trajectory">Split the trajectory</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#Apply-the-analysis-per-block">Apply the analysis per block</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#Combine-the-results">Combine the results</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#Other-possible-parallelism-approaches-for-multiple-analyses">Other possible parallelism approaches for multiple analyses</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#See-Also">See Also</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#References">References</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="custom_parallel_analysis.html">Parallelizing analysis</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Advanced</span></p>
 <ul>
@@ -232,7 +206,7 @@
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="../../_sources/examples/analysis/custom_parallel_analysis.ipynb.txt" rel="nofollow"> View page source</a>
+            <a href="../../_sources/examples/analysis/.custom_parallel_analysis.ipynb.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -470,7 +444,7 @@ div.rendered_html tbody tr:hover {
 <h1>Parallelizing analysis<a class="headerlink" href="#Parallelizing-analysis" title="Permalink to this headline">¶</a></h1>
 <p>As we approach the exascale barrier, researchers are handling increasingly large volumes of molecular dynamics (MD) data. Whilst MDAnalysis is a flexible and relatively fast framework for complex analysis tasks in MD simulations, implementing a parallel computing framework would play a pivotal role in accelerating the time to solution for such large datasets.</p>
 <p>This document illustrates how you can run your own analysis scripts in parallel with MDAnalysis.</p>
-<p><strong>Last executed:</strong> Sep 16, 2020 with MDAnalysis 2.0.0-dev0</p>
+<p><strong>Last executed:</strong> Aug 25, 2020 with MDAnalysis 2.0.0</p>
 <p><strong>Last updated:</strong> August 2020</p>
 <p><strong>Minimum version of MDAnalysis:</strong> 2.0.0</p>
 <p><strong>Packages required:</strong></p>
@@ -606,7 +580,7 @@ your own multiple-core laptops/desktops to distributed clusters in the HPC cente
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../_images/examples_analysis_custom_parallel_analysis_11_0.png" src="../../_images/examples_analysis_custom_parallel_analysis_11_0.png" />
+<img alt="../../_images/examples_analysis_.custom_parallel_analysis_11_0.png" src="../../_images/examples_analysis_.custom_parallel_analysis_11_0.png" />
 </div>
 </div>
 </div>
@@ -699,7 +673,7 @@ your own multiple-core laptops/desktops to distributed clusters in the HPC cente
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../_images/examples_analysis_custom_parallel_analysis_19_0.png" src="../../_images/examples_analysis_custom_parallel_analysis_19_0.png" />
+<img alt="../../_images/examples_analysis_.custom_parallel_analysis_19_0.png" src="../../_images/examples_analysis_.custom_parallel_analysis_19_0.png" />
 </div>
 </div>
 </div>
@@ -728,7 +702,7 @@ waiting for submission (<code class="docutils literal notranslate"><span class="
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&lt;dask.config.set at 0x7ff4d4bdf3a0&gt;
+&lt;dask.config.set at 0x7f1ae080a670&gt;
 </pre></div></div>
 </div>
 <p>Below is how you can utilize <code class="docutils literal notranslate"><span class="pre">dask.distributed</span></code> module to build a local cluster.</p>
@@ -746,17 +720,6 @@ waiting for submission (<code class="docutils literal notranslate"><span class="
 </pre></div>
 </div>
 </div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-/home/scottzhuang/anaconda3/envs/gsoc/lib/python3.8/site-packages/distributed/node.py:151: UserWarning: Port 8787 is already in use.
-Perhaps you already have a cluster running?
-Hosting the HTTP server on port 42013 instead
-  warnings.warn(
-</pre></div></div>
-</div>
 <div class="nboutput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
@@ -767,8 +730,8 @@ Hosting the HTTP server on port 42013 instead
 <td style="vertical-align: top; border: 0px solid white">
 <h3 style="text-align: left;">Client</h3>
 <ul style="text-align: left; list-style: none; margin: 0; padding: 0;">
-  <li><b>Scheduler: </b>tcp://127.0.0.1:37145</li>
-  <li><b>Dashboard: </b><a href='http://127.0.0.1:42013/status' target='_blank'>http://127.0.0.1:42013/status</a></li>
+  <li><b>Scheduler: </b>tcp://127.0.0.1:40071</li>
+  <li><b>Dashboard: </b><a href='http://127.0.0.1:8787/status' target='_blank'>http://127.0.0.1:8787/status</a></li>
 </ul>
 </td>
 <td style="vertical-align: top; border: 0px solid white">
@@ -827,7 +790,7 @@ Hosting the HTTP server on port 42013 instead
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../_images/examples_analysis_custom_parallel_analysis_28_0.png" src="../../_images/examples_analysis_custom_parallel_analysis_28_0.png" />
+<img alt="../../_images/examples_analysis_.custom_parallel_analysis_28_0.png" src="../../_images/examples_analysis_.custom_parallel_analysis_28_0.png" />
 </div>
 </div>
 <p>We can also use the old <code class="docutils literal notranslate"><span class="pre">radgyr</span></code> function because <code class="docutils literal notranslate"><span class="pre">dask</span></code> is more flexible on the input args.</p>
@@ -875,7 +838,7 @@ Hosting the HTTP server on port 42013 instead
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../_images/examples_analysis_custom_parallel_analysis_33_0.png" src="../../_images/examples_analysis_custom_parallel_analysis_33_0.png" />
+<img alt="../../_images/examples_analysis_.custom_parallel_analysis_33_0.png" src="../../_images/examples_analysis_.custom_parallel_analysis_33_0.png" />
 </div>
 </div>
 <p>We can also use Dask dashboard (with dask.distributed.Client) to examine how jobs are distributed along all the workers. So each green bar below represents a single-frame <code class="docutils literal notranslate"><span class="pre">radgyr</span></code>.</p>
@@ -983,7 +946,7 @@ Hosting the HTTP server on port 42013 instead
 </pre></div>
 </div>
 <div class="output_area docutils container">
-<img alt="../../_images/examples_analysis_custom_parallel_analysis_48_0.png" src="../../_images/examples_analysis_custom_parallel_analysis_48_0.png" />
+<img alt="../../_images/examples_analysis_.custom_parallel_analysis_48_0.png" src="../../_images/examples_analysis_.custom_parallel_analysis_48_0.png" />
 </div>
 </div>
 <div class="nbinput nblast docutils container">
@@ -1027,7 +990,7 @@ Hosting the HTTP server on port 42013 instead
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../_images/examples_analysis_custom_parallel_analysis_52_0.png" src="../../_images/examples_analysis_custom_parallel_analysis_52_0.png" />
+<img alt="../../_images/examples_analysis_.custom_parallel_analysis_52_0.png" src="../../_images/examples_analysis_.custom_parallel_analysis_52_0.png" />
 </div>
 </div>
 <p>If you look at the Dask dashboard (with dask.distributed.Client) this time, you will see each green bar below reprsents a per-block analysis for <code class="docutils literal notranslate"><span class="pre">radgyr</span></code>.</p>
@@ -1126,20 +1089,13 @@ Hosting the HTTP server on port 42013 instead
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../_images/examples_analysis_custom_parallel_analysis_61_0.png" src="../../_images/examples_analysis_custom_parallel_analysis_61_0.png" />
+<img alt="../../_images/examples_analysis_.custom_parallel_analysis_61_0.png" src="../../_images/examples_analysis_.custom_parallel_analysis_61_0.png" />
 </div>
 </div>
 </div>
 <div class="section" id="See-Also">
 <h2>See Also<a class="headerlink" href="#See-Also" title="Permalink to this headline">¶</a></h2>
 <p>The parallel version of MDAnalysis is still under development. For existing solution and some implemented parallel analysis, go to <a class="reference external" href="https://www.mdanalysis.org/pmda/">PMDA</a>. PMDA (<a class="bibtex reference internal" href="../../references.html#fan-pmda-2019" id="id5">[SFPG+19]</a>) applies the aforementioned split-apply-combine scheme with dask. In the future, it may provide a framework that consolidates all the mentioned parallel conditions.</p>
-</div>
-<div class="section" id="References">
-<h2>References<a class="headerlink" href="#References" title="Permalink to this headline">¶</a></h2>
-<p>[1] Oliver Beckstein, Elizabeth J. Denning, Juan R. Perilla, and Thomas B. Woolf. Zipping and Unzipping of Adenylate Kinase: Atomistic Insights into the Ensemble of Open↔Closed Transitions. Journal of Molecular Biology, 394(1):160–176, November 2009. 00107. URL: <a class="reference external" href="https://linkinghub.elsevier.com/retrieve/pii/S0022283609011164">https://linkinghub.elsevier.com/retrieve/pii/S0022283609011164</a>, doi:10.1016/j.jmb.2009.09.009.</p>
-<p>[2] Richard J. Gowers, Max Linke, Jonathan Barnoud, Tyler J. E. Reddy, Manuel N. Melo, Sean L. Seyler, Jan Domański, David L. Dotson, Sébastien Buchoux, Ian M. Kenney, and Oliver Beckstein. MDAnalysis: A Python Package for the Rapid Analysis of Molecular Dynamics Simulations. Proceedings of the 15th Python in Science Conference, pages 98–105, 2016. 00152. URL: <a class="reference external" href="https://conference.scipy.org/proceedings/scipy2016/oliver_beckstein.html">https://conference.scipy.org/proceedings/scipy2016/oliver_beckstein.html</a>, doi:10.25080/Majora-629e541a-00e.</p>
-<p>[3] Naveen Michaud-Agrawal, Elizabeth J. Denning, Thomas B. Woolf, and Oliver Beckstein. MDAnalysis: A toolkit for the analysis of molecular dynamics simulations. Journal of Computational Chemistry, 32(10):2319–2327, July 2011. 00778. URL: <a class="reference external" href="http://doi.wiley.com/10.1002/jcc.21787">http://doi.wiley.com/10.1002/jcc.21787</a>, doi:10.1002/jcc.21787.</p>
-<p>[4] Max Linke Shujie Fan, Ioannis Paraskevakos, Richard J. Gowers, Michael Gecht, and Oliver Beckstein. PMDA - Parallel Molecular Dynamics Analysis. In Chris Calloway, David Lippa, Dillon Niederhut, and David Shupe, editors, Proceedings of the 18th Python in Science Conference, 134 – 142. 2019. doi:10.25080/Majora-7ddc1dd1-013.</p>
 </div>
 </div>
 
@@ -1148,15 +1104,6 @@ Hosting the HTTP server on port 42013 instead
            
           </div>
           <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="../../standard_selections.html" class="btn btn-neutral float-right" title="Standard residues in MDAnalysis selections" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="custom_trajectory_analysis.html" class="btn btn-neutral float-left" title="Writing your own trajectory analysis" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
-    </div>
   
 
   <hr/>
