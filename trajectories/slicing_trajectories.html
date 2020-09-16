@@ -270,48 +270,13 @@
 <span class="go"> False False False False False False False False False False False False</span>
 <span class="go"> False False False False False False False False False False False False</span>
 <span class="go"> False False False False False False False False False False False False</span>
-<span class="go"> False  True]</span>
+<span class="go"> False False]</span>
 </pre></div>
 </div>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [14]: </span><span class="n">fiter</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">trajectory</span><span class="p">[</span><span class="n">bools</span><span class="p">]</span>
 
 <span class="gp">In [15]: </span><span class="nb">print</span><span class="p">([</span><span class="n">ts</span><span class="o">.</span><span class="n">frame</span> <span class="k">for</span> <span class="n">ts</span> <span class="ow">in</span> <span class="n">fiter</span><span class="p">])</span>
-<span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">StopIteration</span><span class="g g-Whitespace">                             </span>Traceback (most recent call last)
-<span class="nn">~/mdanalysis_backport/package/MDAnalysis/coordinates/base.py</span> in <span class="ni">__iter__</span><span class="nt">(self)</span>
-<span class="g g-Whitespace">   </span><span class="mi">1094</span>         <span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="p">:</span>
-<span class="ne">-&gt; </span><span class="mi">1095</span>             <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">trajectory</span><span class="o">.</span><span class="n">_read_frame_with_aux</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
-<span class="g g-Whitespace">   </span><span class="mi">1096</span> 
-
-<span class="nn">~/mdanalysis_backport/package/MDAnalysis/coordinates/base.py</span> in <span class="ni">_read_frame_with_aux</span><span class="nt">(self, frame)</span>
-<span class="g g-Whitespace">   </span><span class="mi">1622</span>         <span class="sd">&quot;&quot;&quot;Move to *frame*, updating ts with trajectory, transformations and auxiliary data.&quot;&quot;&quot;</span>
-<span class="ne">-&gt; </span><span class="mi">1623</span>         <span class="n">ts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_frame</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>  <span class="c1"># pylint: disable=assignment-from-no-return</span>
-<span class="g g-Whitespace">   </span><span class="mi">1624</span>         <span class="k">for</span> <span class="n">aux</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">aux_list</span><span class="p">:</span>
-
-<span class="nn">~/mdanalysis_backport/package/MDAnalysis/coordinates/DCD.py</span> in <span class="ni">_read_frame</span><span class="nt">(self, i)</span>
-<span class="g g-Whitespace">    </span><span class="mi">184</span>         <span class="bp">self</span><span class="o">.</span><span class="n">_file</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
-<span class="ne">--&gt; </span><span class="mi">185</span>         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_next_timestep</span><span class="p">()</span>
-<span class="g g-Whitespace">    </span><span class="mi">186</span> 
-
-<span class="nn">~/mdanalysis_backport/package/MDAnalysis/coordinates/DCD.py</span> in <span class="ni">_read_next_timestep</span><span class="nt">(self, ts)</span>
-<span class="g g-Whitespace">    </span><span class="mi">194</span>             <span class="n">ts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ts</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-<span class="ne">--&gt; </span><span class="mi">195</span>         <span class="n">frame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-<span class="g g-Whitespace">    </span><span class="mi">196</span>         <span class="bp">self</span><span class="o">.</span><span class="n">_frame</span> <span class="o">+=</span> <span class="mi">1</span>
-
-<span class="nn">~/mdanalysis_backport/package/MDAnalysis/lib/formats/libdcd.pyx</span> in <span class="ni">MDAnalysis.lib.formats.libdcd.DCDFile.read</span><span class="nt">()</span>
-
-<span class="ne">StopIteration</span>: 
-
-<span class="n">The</span> <span class="n">above</span> <span class="n">exception</span> <span class="n">was</span> <span class="n">the</span> <span class="n">direct</span> <span class="n">cause</span> <span class="n">of</span> <span class="n">the</span> <span class="n">following</span> <span class="n">exception</span><span class="p">:</span>
-
-<span class="ne">RuntimeError</span><span class="g g-Whitespace">                              </span>Traceback (most recent call last)
-<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">15</span><span class="o">-</span><span class="mf">0e02</span><span class="n">b73dc35f</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
-<span class="ne">----&gt; </span><span class="mi">1</span> <span class="nb">print</span><span class="p">([</span><span class="n">ts</span><span class="o">.</span><span class="n">frame</span> <span class="k">for</span> <span class="n">ts</span> <span class="ow">in</span> <span class="n">fiter</span><span class="p">])</span>
-
-<span class="nn">&lt;ipython-input-15-0e02b73dc35f&gt;</span> in <span class="ni">&lt;listcomp&gt;</span><span class="nt">(.0)</span>
-<span class="ne">----&gt; </span><span class="mi">1</span> <span class="nb">print</span><span class="p">([</span><span class="n">ts</span><span class="o">.</span><span class="n">frame</span> <span class="k">for</span> <span class="n">ts</span> <span class="ow">in</span> <span class="n">fiter</span><span class="p">])</span>
-
-<span class="ne">RuntimeError</span>: generator raised StopIteration
+<span class="go">[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]</span>
 </pre></div>
 </div>
 <p>You can also use fancy indexing to control the order of specific frames.</p>

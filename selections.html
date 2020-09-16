@@ -263,7 +263,7 @@ which can happen with complicated selections. When order matters, <a class="refe
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [6]: </span><span class="n">sph_6</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">select_atoms</span><span class="p">(</span><span class="s2">&quot;sphzone 6 protein&quot;</span><span class="p">)</span>
 
 <span class="gp">In [7]: </span><span class="n">u</span><span class="o">.</span><span class="n">select_atoms</span><span class="p">(</span><span class="s2">&quot;around 3 group sph_6&quot;</span><span class="p">,</span> <span class="n">sph_6</span><span class="o">=</span><span class="n">sph_6</span><span class="p">)</span>
-<span class="gh">Out[7]: </span><span class="go">&lt;AtomGroup with 88 atoms&gt;</span>
+<span class="gh">Out[7]: </span><span class="go">&lt;AtomGroup with 81 atoms&gt;</span>
 </pre></div>
 </div>
 <ul class="simple">
@@ -277,7 +277,7 @@ which can happen with complicated selections. When order matters, <a class="refe
 <li><p>Create <a class="reference internal" href="#dynamic-selections"><span class="std std-ref">dynamic UpdatingAtomGroups</span></a> with <code class="docutils literal notranslate"><span class="pre">updating=True</span></code>:</p></li>
 </ul>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [9]: </span><span class="n">u</span><span class="o">.</span><span class="n">select_atoms</span><span class="p">(</span><span class="s2">&quot;prop x &lt; 5 and prop y &lt; 5 and prop z &lt; 5&quot;</span><span class="p">,</span> <span class="n">updating</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="gh">Out[9]: </span><span class="go">&lt;AtomGroup with 923 atoms, with selection &#39;prop x &lt; 5 and prop y &lt; 5 and prop z &lt; 5&#39; on the entire Universe.&gt;</span>
+<span class="gh">Out[9]: </span><span class="go">&lt;AtomGroup with 917 atoms, with selection &#39;prop x &lt; 5 and prop y &lt; 5 and prop z &lt; 5&#39; on the entire Universe.&gt;</span>
 </pre></div>
 </div>
 <p>It is possible to export selections for external software
@@ -501,7 +501,7 @@ instead.</p>
 <span class="gp">In [12]: </span><span class="n">ag_updating</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">select_atoms</span><span class="p">(</span><span class="s2">&quot;prop x &lt; 5 and prop y &lt; 5 and prop z &lt; 5&quot;</span><span class="p">,</span> <span class="n">updating</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <span class="gp">In [13]: </span><span class="n">ag_updating</span>
-<span class="gh">Out[13]: </span><span class="go">&lt;AtomGroup with 923 atoms, with selection &#39;prop x &lt; 5 and prop y &lt; 5 and prop z &lt; 5&#39; on the entire Universe.&gt;</span>
+<span class="gh">Out[13]: </span><span class="go">&lt;AtomGroup with 917 atoms, with selection &#39;prop x &lt; 5 and prop y &lt; 5 and prop z &lt; 5&#39; on the entire Universe.&gt;</span>
 </pre></div>
 </div>
 <p>It behaves just like an <a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v1.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AtomGroup</span></code></a>

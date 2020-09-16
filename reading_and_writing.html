@@ -353,13 +353,13 @@ of a <a class="reference external" href="https://www.mdanalysis.org/docs/documen
 
 <span class="gp">In [16]: </span><span class="n">universe</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">positions</span>
 <span class="gh">Out[16]: </span><span class="go"></span>
-<span class="go">array([[0.23431297, 0.61786366, 0.58936036],</span>
-<span class="go">       [0.65227264, 0.733372  , 0.84746355],</span>
-<span class="go">       [0.2097861 , 0.88274884, 0.23029499],</span>
+<span class="go">array([[0.7430297 , 0.65915906, 0.21177314],</span>
+<span class="go">       [0.14913309, 0.46189955, 0.47005796],</span>
+<span class="go">       [0.24005976, 0.14264698, 0.69084173],</span>
 <span class="go">       ...,</span>
-<span class="go">       [0.1599976 , 0.52771306, 0.5640107 ],</span>
-<span class="go">       [0.5298136 , 0.6732864 , 0.5535724 ],</span>
-<span class="go">       [0.788236  , 0.34810328, 0.94696903]], dtype=float32)</span>
+<span class="go">       [0.10892858, 0.87104326, 0.93570405],</span>
+<span class="go">       [0.9350352 , 0.38716218, 0.3087749 ],</span>
+<span class="go">       [0.93546146, 0.4127761 , 0.1785518 ]], dtype=float32)</span>
 </pre></div>
 </div>
 <p>or they can be directly passed in when creating a Universe.</p>
@@ -367,13 +367,13 @@ of a <a class="reference external" href="https://www.mdanalysis.org/docs/documen
 
 <span class="gp">In [18]: </span><span class="n">universe2</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">positions</span>
 <span class="gh">Out[18]: </span><span class="go"></span>
-<span class="go">array([[0.23431297, 0.61786366, 0.58936036],</span>
-<span class="go">       [0.65227264, 0.733372  , 0.84746355],</span>
-<span class="go">       [0.2097861 , 0.88274884, 0.23029499],</span>
+<span class="go">array([[0.7430297 , 0.65915906, 0.21177314],</span>
+<span class="go">       [0.14913309, 0.46189955, 0.47005796],</span>
+<span class="go">       [0.24005976, 0.14264698, 0.69084173],</span>
 <span class="go">       ...,</span>
-<span class="go">       [0.1599976 , 0.52771306, 0.5640107 ],</span>
-<span class="go">       [0.5298136 , 0.6732864 , 0.5535724 ],</span>
-<span class="go">       [0.788236  , 0.34810328, 0.94696903]], dtype=float32)</span>
+<span class="go">       [0.10892858, 0.87104326, 0.93570405],</span>
+<span class="go">       [0.9350352 , 0.38716218, 0.3087749 ],</span>
+<span class="go">       [0.93546146, 0.4127761 , 0.1785518 ]], dtype=float32)</span>
 </pre></div>
 </div>
 </div>
@@ -414,22 +414,67 @@ of a <a class="reference external" href="https://www.mdanalysis.org/docs/documen
 </div>
 <div class="section" id="pickling">
 <h2>Pickling<a class="headerlink" href="#pickling" title="Permalink to this headline">¶</a></h2>
-<p>MDAnalysis currently supports pickling of AtomGroups and trajectories that have <em>not</em> been read in as <a class="reference internal" href="#chainreader"><span class="std std-ref">multiple files</span></a> or from a PDB file (<a class="reference external" href="https://github.com/MDAnalysis/mdanalysis/issues/1981&gt;">Issue 1981</a>). Universe cannot be pickled.</p>
+<p>MDAnalysis supports pickling of most of its data structures and trajectory formats. Unsupported attributes can be found in PR <a class="reference external" href="https://github.com/MDAnalysis/mdanalysis/issues/2887">#2887</a>.</p>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [19]: </span><span class="kn">import</span> <span class="nn">pickle</span>
 
 <span class="gp">In [20]: </span><span class="kn">from</span> <span class="nn">MDAnalysis.tests.datafiles</span> <span class="kn">import</span> <span class="n">PSF</span><span class="p">,</span> <span class="n">DCD</span>
 
 <span class="gp">In [21]: </span><span class="n">psf</span> <span class="o">=</span> <span class="n">mda</span><span class="o">.</span><span class="n">Universe</span><span class="p">(</span><span class="n">PSF</span><span class="p">,</span> <span class="n">DCD</span><span class="p">)</span>
 
-<span class="gp">In [22]: </span><span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">psf</span><span class="o">.</span><span class="n">trajectory</span><span class="p">))</span>
-<span class="gh">Out[22]: </span><span class="go">&lt;DCDReader /home/scottzhuang/mdanalysis_backport/testsuite/MDAnalysisTests/data/adk_dims.dcd with 98 frames of 3341 atoms&gt;</span>
+<span class="gp">In [22]: </span><span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">psf</span><span class="p">))</span>
+<span class="gh">Out[22]: </span><span class="go">&lt;Universe with 3341 atoms&gt;</span>
 </pre></div>
 </div>
-<p>While <em>trajectories</em> from PDB files cannot be pickled, trajectories where only the topology information comes from a PDB file <em>can</em>. For example, the universe below loads the trajectory information from a <a class="reference internal" href="formats/reference/trr.html#trr-format"><span class="std std-ref">TRR</span></a> file.</p>
-<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [23]: </span><span class="n">u</span> <span class="o">=</span> <span class="n">mda</span><span class="o">.</span><span class="n">Universe</span><span class="p">(</span><span class="n">PDB</span><span class="p">,</span> <span class="n">TRR</span><span class="p">)</span>
+<p>As for <a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v1.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MDAnalysis.core.groups.AtomGroup</span></code></a>, during serialization, it will be pickled with its bound
+<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/universe.html#MDAnalysis.core.universe.Universe" title="(in MDAnalysis v1.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MDAnalysis.core.universe.Universe</span></code></a> which means after unpickling,
+a new <a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/universe.html#MDAnalysis.core.universe.Universe" title="(in MDAnalysis v1.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MDAnalysis.core.universe.Universe</span></code></a> will be created and
+be attached by the new <a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v1.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MDAnalysis.core.groups.AtomGroup</span></code></a>. If the Universe is serialized
+with its <a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v1.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MDAnalysis.core.groups.AtomGroup</span></code></a>, they will still be bound together afterwards:</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [23]: </span><span class="kn">import</span> <span class="nn">pickle</span>
 
-<span class="gp">In [24]: </span><span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">trajectory</span><span class="p">))</span>
-<span class="gh">Out[24]: </span><span class="go">&lt;TRRReader /home/scottzhuang/mdanalysis_backport/testsuite/MDAnalysisTests/data/adk_oplsaa.trr with 10 frames of 47681 atoms&gt;</span>
+<span class="gp">In [24]: </span><span class="kn">from</span> <span class="nn">MDAnalysis.tests.datafiles</span> <span class="kn">import</span> <span class="n">PSF</span><span class="p">,</span> <span class="n">DCD</span>
+
+<span class="gp">In [25]: </span><span class="n">u</span> <span class="o">=</span> <span class="n">mda</span><span class="o">.</span><span class="n">Universe</span><span class="p">(</span><span class="n">PSF</span><span class="p">,</span> <span class="n">DCD</span><span class="p">)</span>
+
+<span class="gp">In [26]: </span><span class="n">g</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">atoms</span>
+
+<span class="gp">In [27]: </span><span class="n">g_pickled</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">g</span><span class="p">))</span>
+
+<span class="gp">In [28]: </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;g_pickled.universe is u: &quot;</span><span class="p">,</span> <span class="n">u</span> <span class="ow">is</span> <span class="n">g_pickled</span><span class="o">.</span><span class="n">universe</span><span class="p">)</span>
+<span class="go">g_pickled.universe is u:  False</span>
+
+<span class="gp">In [29]: </span><span class="n">g_pickled</span><span class="p">,</span> <span class="n">u_pickled</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">((</span><span class="n">g</span><span class="p">,</span> <span class="n">u</span><span class="p">)))</span>
+
+<span class="gp">In [30]: </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;g_pickled.universe is u_pickled: &quot;</span><span class="p">,</span>
+<span class="gp">   ....: </span>       <span class="n">u_pickled</span> <span class="ow">is</span> <span class="n">g_pickled</span><span class="o">.</span><span class="n">universe</span><span class="p">)</span>
+<span class="gp">   ....: </span>
+<span class="go">g_pickled.universe is u_pickled:  True</span>
+</pre></div>
+</div>
+<p>If multiple <a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v1.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MDAnalysis.core.groups.AtomGroup</span></code></a> are bound to the same
+<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/universe.html#MDAnalysis.core.universe.Universe" title="(in MDAnalysis v1.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MDAnalysis.core.universe.Universe</span></code></a>, they will bound to the same one
+after serialization:</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [31]: </span><span class="n">u</span> <span class="o">=</span> <span class="n">mda</span><span class="o">.</span><span class="n">Universe</span><span class="p">(</span><span class="n">PSF</span><span class="p">,</span> <span class="n">DCD</span><span class="p">)</span>
+
+<span class="gp">In [32]: </span><span class="n">g</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">atoms</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+
+<span class="gp">In [33]: </span><span class="n">h</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">atoms</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span>
+
+<span class="gp">In [34]: </span><span class="n">g_pickled</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">g</span><span class="p">))</span>
+
+<span class="gp">In [35]: </span><span class="n">h_pickled</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">h</span><span class="p">))</span>
+
+<span class="gp">In [36]: </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;g_pickled.universe is h_pickled.universe : &quot;</span><span class="p">,</span>
+<span class="gp">   ....: </span>       <span class="n">g_pickled</span><span class="o">.</span><span class="n">universe</span> <span class="ow">is</span> <span class="n">h_pickled</span><span class="o">.</span><span class="n">universe</span><span class="p">)</span>
+<span class="gp">   ....: </span>
+<span class="go">g_pickled.universe is h_pickled.universe :  False</span>
+
+<span class="gp">In [37]: </span><span class="n">g_pickled</span><span class="p">,</span> <span class="n">h_pickled</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">((</span><span class="n">g</span><span class="p">,</span> <span class="n">h</span><span class="p">)))</span>
+
+<span class="gp">In [38]: </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;g_pickled.universe is h_pickled.universe: &quot;</span><span class="p">,</span>
+<span class="gp">   ....: </span>       <span class="n">g_pickled</span><span class="o">.</span><span class="n">universe</span> <span class="ow">is</span> <span class="n">h_pickled</span><span class="o">.</span><span class="n">universe</span><span class="p">)</span>
+<span class="gp">   ....: </span>
+<span class="go">g_pickled.universe is h_pickled.universe:  True</span>
 </pre></div>
 </div>
 </div>
