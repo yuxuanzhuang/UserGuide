@@ -141,7 +141,7 @@
 <li class="toctree-l1"><a class="reference internal" href="README.html#polymers-and-membranes">Polymers and membranes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="custom_trajectory_analysis.html">Writing your own trajectory analysis</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Parallelizing analysis</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#Backgroud">Backgroud</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#Background">Background</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#Loading-files">Loading files</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#Radius-of-gyration">Radius of gyration</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#Serial-Analysis">Serial Analysis</a></li>
@@ -499,10 +499,10 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 </div>
-<div class="section" id="Backgroud">
-<h2>Backgroud<a class="headerlink" href="#Backgroud" title="Permalink to this headline">¶</a></h2>
-<p>In MDAnalysis, most implemented analysis methods are based on <code class="docutils literal notranslate"><span class="pre">AnalysisBase</span></code>, which provides a generic API for users to write their own trajectory analysis. However, this framework only takes single-core power of the PC by iterating the trajectory and running a frame-wise analysis. Below we aim to first explore some possible simple implementations of parallelism, including using multiprocessing and dask. We will also discuss the acceleration approaches that should be considered ranging from
-your own multiple-core laptops/desktops to distributed clusters in the HPC center.</p>
+<div class="section" id="Background">
+<h2>Background<a class="headerlink" href="#Background" title="Permalink to this headline">¶</a></h2>
+<p>In MDAnalysis, most implemented analysis methods are based on <code class="docutils literal notranslate"><span class="pre">AnalysisBase</span></code>, which provides a generic API for users to write their own trajectory analysis. However, this framework only takes single-core power of the PC by iterating through the trajectory and running a frame-wise analysis. Below we aim to first explore some possible simple implementations of parallelism, including using multiprocessing and dask. We will also discuss the acceleration approaches that should be considered,
+ranging from your own multiple-core laptops/desktops to distributed clusters. “</p>
 <div class="section" id="Loading-files">
 <h3>Loading files<a class="headerlink" href="#Loading-files" title="Permalink to this headline">¶</a></h3>
 <p>The test files we will be working with here feature adenylate kinase (AdK), a phosopho-transferase enzyme. (<a class="bibtex reference internal" href="../../references.html#beckstein-zipping-2009" id="id3">[BDPW09]</a>). The trajectory has 4187 frames, which will take quite some time to run the analysis on with the conventional serial (single-core) approach.</p>
@@ -539,7 +539,7 @@ your own multiple-core laptops/desktops to distributed clusters in the HPC cente
 </div>
 <div class="section" id="Radius-of-gyration">
 <h3>Radius of gyration<a class="headerlink" href="#Radius-of-gyration" title="Permalink to this headline">¶</a></h3>
-<p>For detail description of this analysis, read <a class="reference external" href="https://mdanalysis.org/UserGuide/examples/analysis/custom_trajectory_analysis.html">Writing your own trajectory</a>.</p>
+<p>For a detail description of this analysis, read <a class="reference external" href="https://mdanalysis.org/UserGuide/examples/analysis/custom_trajectory_analysis.html">Writing your own trajectory</a>.</p>
 <p>Here is a common form of single-frame method that we can normally see inside <code class="docutils literal notranslate"><span class="pre">AnalysisBase</span></code>. It may contain both some dynamic parts that changes along time either implicitly or explicitly (e.g. <code class="docutils literal notranslate"><span class="pre">AtomGroup</span></code>) and some static parts (e.g. a reference frame).</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
@@ -1036,10 +1036,10 @@ Hosting the HTTP server on port 42013 instead
 </div>
 <div class="section" id="Other-possible-parallelism-approaches-for-multiple-analyses">
 <h2>Other possible parallelism approaches for multiple analyses<a class="headerlink" href="#Other-possible-parallelism-approaches-for-multiple-analyses" title="Permalink to this headline">¶</a></h2>
-<p>In real life, you may also want to perform multiple analyses (or analyzing multiple trajectories), you can use some high-level parallelism, i.e. running all the serial analyses in parallel.</p>
-<p>Here we use <a class="reference external" href="https://joblib.readthedocs.io/en/latest/">joblib</a>. It is implemented on <code class="docutils literal notranslate"><span class="pre">multiprocessing</span></code> and provides lightweight pipelining in Python. Comparing to <code class="docutils literal notranslate"><span class="pre">multiprocessing</span></code>, it has a simple API and convenient persistence of cached results.</p>
+<p>You may want to perform multiple analyses (or analyze multiple trajectories). In this case, you can use some high-level parallelism, i.e. running all the serial analyses in parallel.:nbsphinx-math:<cite>n</cite>”,</p>
+<p>Here we use <a class="reference external" href="https://joblib.readthedocs.io/en/latest/">joblib</a>. It is implemented on <code class="docutils literal notranslate"><span class="pre">multiprocessing</span></code> and provides lightweight pipelining in Python. Compared to <code class="docutils literal notranslate"><span class="pre">multiprocessing</span></code>, it has a simple API and convenient persistence of cached results.”</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[33]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1049,30 +1049,19 @@ Hosting the HTTP server on port 42013 instead
 </pre></div>
 </div>
 </div>
+<p>Here we leverage the power of <code class="docutils literal notranslate"><span class="pre">AnalysisFromFunction</span></code> to fast construct a class that will iterate through the trajectory and save the analysis results.</p>
+<p>If you want to know more about how <code class="docutils literal notranslate"><span class="pre">AnalysisFromFunction</span></code> works, you can read it from <a class="reference external" href="https://mdanalysis.org/UserGuide/examples/analysis/custom_trajectory_analysis.html">Writing your own trajectory</a>.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[34]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="k">def</span> <span class="nf">run_analysis</span><span class="p">(</span><span class="n">analysis</span><span class="p">):</span>
-    <span class="n">analysis</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
-    <span class="k">return</span> <span class="n">analysis</span><span class="o">.</span><span class="n">results</span>
+<span></span><span class="kn">from</span> <span class="nn">MDAnalysis.analysis.base</span> <span class="kn">import</span> <span class="n">AnalysisFromFunction</span>
 </pre></div>
 </div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># https://userguide.mdanalysis.org/1.0.0/examples/analysis/custom_trajectory_analysis.html#Creating-an-analysis-from-a-function</span>
-
-<span class="kn">from</span> <span class="nn">MDAnalysis.analysis.base</span> <span class="kn">import</span> <span class="n">AnalysisFromFunction</span>
-</pre></div>
-</div>
-</div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[30]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[35]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1096,8 +1085,22 @@ Hosting the HTTP server on port 42013 instead
 </pre></div>
 </div>
 </div>
+<p><code class="docutils literal notranslate"><span class="pre">run_analysis</span></code> is a simple way to run the analysis and retrieve the results.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[31]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[36]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">run_analysis</span><span class="p">(</span><span class="n">analysis</span><span class="p">):</span>
+    <span class="n">analysis</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">analysis</span><span class="o">.</span><span class="n">results</span>
+</pre></div>
+</div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">joblib.delayed</span></code> is different from <code class="docutils literal notranslate"><span class="pre">dask.delayed</span></code>; it cannot be used as a “pie” syntax (<code class="docutils literal notranslate"><span class="pre">&#64;joblib.delayed</span></code>), so you have to use it as below.</p>
+<p>Similiar to <code class="docutils literal notranslate"><span class="pre">dask.delayed</span></code>, the code inside <code class="docutils literal notranslate"><span class="pre">joblib.delayed</span></code> will not run immediately but be pushed into a job queue waiting for processing. In this case, <code class="docutils literal notranslate"><span class="pre">run_anlaysis()</span></code> is processed by <code class="docutils literal notranslate"><span class="pre">Parallel</span></code> with defined number of workers–<code class="docutils literal notranslate"><span class="pre">n_jobs</span></code>.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[37]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1106,8 +1109,9 @@ Hosting the HTTP server on port 42013 instead
 </pre></div>
 </div>
 </div>
+<p>The <code class="docutils literal notranslate"><span class="pre">results_ensemble</span></code> will be a list of <code class="docutils literal notranslate"><span class="pre">results</span></code> that is returned from <code class="docutils literal notranslate"><span class="pre">run_analysis</span></code>. You can further split and process each analysis.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[32]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[39]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1126,13 +1130,13 @@ Hosting the HTTP server on port 42013 instead
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../_images/examples_analysis_custom_parallel_analysis_61_0.png" src="../../_images/examples_analysis_custom_parallel_analysis_61_0.png" />
+<img alt="../../_images/examples_analysis_custom_parallel_analysis_65_0.png" src="../../_images/examples_analysis_custom_parallel_analysis_65_0.png" />
 </div>
 </div>
 </div>
 <div class="section" id="See-Also">
 <h2>See Also<a class="headerlink" href="#See-Also" title="Permalink to this headline">¶</a></h2>
-<p>The parallel version of MDAnalysis is still under development. For existing solution and some implemented parallel analysis, go to <a class="reference external" href="https://www.mdanalysis.org/pmda/">PMDA</a>. PMDA (<a class="bibtex reference internal" href="../../references.html#fan-pmda-2019" id="id5">[SFPG+19]</a>) applies the aforementioned split-apply-combine scheme with dask. In the future, it may provide a framework that consolidates all the mentioned parallel conditions.</p>
+<p>The parallel version of MDAnalysis is still under development. For existing solutions and some implementations of parallel analysis, go to <a class="reference external" href="https://www.mdanalysis.org/pmda/">PMDA</a>. PMDA (<span class="bibtex" id="id5">[“fan_pmda_2019”]</span>) applies the aforementioned split-apply-combine scheme with Dask. In the future, it may provide a framework that consolidates all the parallelisation schemes described in this tutorial.”</p>
 </div>
 <div class="section" id="References">
 <h2>References<a class="headerlink" href="#References" title="Permalink to this headline">¶</a></h2>
