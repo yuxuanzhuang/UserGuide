@@ -353,13 +353,13 @@ of a <a class="reference external" href="https://www.mdanalysis.org/docs/documen
 
 <span class="gp">In [16]: </span><span class="n">universe</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">positions</span>
 <span class="gh">Out[16]: </span><span class="go"></span>
-<span class="go">array([[0.5704659 , 0.18673871, 0.7988946 ],</span>
-<span class="go">       [0.38410503, 0.41054854, 0.99267197],</span>
-<span class="go">       [0.44481966, 0.17716666, 0.63358027],</span>
+<span class="go">array([[0.7470488 , 0.5021292 , 0.59256554],</span>
+<span class="go">       [0.06355448, 0.6520481 , 0.34100047],</span>
+<span class="go">       [0.9627172 , 0.16972119, 0.3843256 ],</span>
 <span class="go">       ...,</span>
-<span class="go">       [0.91754425, 0.7651492 , 0.65425444],</span>
-<span class="go">       [0.33429813, 0.39670545, 0.49166653],</span>
-<span class="go">       [0.23869537, 0.6998527 , 0.8302492 ]], dtype=float32)</span>
+<span class="go">       [0.99357325, 0.94398135, 0.40909037],</span>
+<span class="go">       [0.7392376 , 0.9016858 , 0.4839163 ],</span>
+<span class="go">       [0.09351768, 0.3803848 , 0.88705146]], dtype=float32)</span>
 </pre></div>
 </div>
 <p>or they can be directly passed in when creating a Universe.</p>
@@ -367,13 +367,13 @@ of a <a class="reference external" href="https://www.mdanalysis.org/docs/documen
 
 <span class="gp">In [18]: </span><span class="n">universe2</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">positions</span>
 <span class="gh">Out[18]: </span><span class="go"></span>
-<span class="go">array([[0.5704659 , 0.18673871, 0.7988946 ],</span>
-<span class="go">       [0.38410503, 0.41054854, 0.99267197],</span>
-<span class="go">       [0.44481966, 0.17716666, 0.63358027],</span>
+<span class="go">array([[0.7470488 , 0.5021292 , 0.59256554],</span>
+<span class="go">       [0.06355448, 0.6520481 , 0.34100047],</span>
+<span class="go">       [0.9627172 , 0.16972119, 0.3843256 ],</span>
 <span class="go">       ...,</span>
-<span class="go">       [0.91754425, 0.7651492 , 0.65425444],</span>
-<span class="go">       [0.33429813, 0.39670545, 0.49166653],</span>
-<span class="go">       [0.23869537, 0.6998527 , 0.8302492 ]], dtype=float32)</span>
+<span class="go">       [0.99357325, 0.94398135, 0.40909037],</span>
+<span class="go">       [0.7392376 , 0.9016858 , 0.4839163 ],</span>
+<span class="go">       [0.09351768, 0.3803848 , 0.88705146]], dtype=float32)</span>
 </pre></div>
 </div>
 </div>
@@ -426,9 +426,9 @@ of a <a class="reference external" href="https://www.mdanalysis.org/docs/documen
 </pre></div>
 </div>
 <p>As for <a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v1.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MDAnalysis.core.groups.AtomGroup</span></code></a>, during serialization, it will be pickled with its bound
-<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/universe.html#MDAnalysis.core.universe.Universe" title="(in MDAnalysis v1.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MDAnalysis.core.universe.Universe</span></code></a> which means after unpickling,
+<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/universe.html#MDAnalysis.core.universe.Universe" title="(in MDAnalysis v1.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MDAnalysis.core.universe.Universe</span></code></a>. This means that after unpickling,
 a new <a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/universe.html#MDAnalysis.core.universe.Universe" title="(in MDAnalysis v1.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MDAnalysis.core.universe.Universe</span></code></a> will be created and
-be attached by the new <a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v1.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MDAnalysis.core.groups.AtomGroup</span></code></a>. If the Universe is serialized
+be attached to the new <a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v1.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MDAnalysis.core.groups.AtomGroup</span></code></a>. If the Universe is serialized
 with its <a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v1.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MDAnalysis.core.groups.AtomGroup</span></code></a>, they will still be bound together afterwards:</p>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [23]: </span><span class="kn">import</span> <span class="nn">pickle</span>
 
@@ -451,8 +451,8 @@ with its <a class="reference external" href="https://www.mdanalysis.org/docs/doc
 <span class="go">g_pickled.universe is u_pickled:  True</span>
 </pre></div>
 </div>
-<p>If multiple <a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v1.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MDAnalysis.core.groups.AtomGroup</span></code></a> are bound to the same
-<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/universe.html#MDAnalysis.core.universe.Universe" title="(in MDAnalysis v1.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MDAnalysis.core.universe.Universe</span></code></a>, they will bound to the same one
+<p>If multiple <a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v1.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MDAnalysis.core.groups.AtomGroup</span></code></a>s are bound to the same
+<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/universe.html#MDAnalysis.core.universe.Universe" title="(in MDAnalysis v1.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MDAnalysis.core.universe.Universe</span></code></a>, they will also be bound to the same one
 after serialization:</p>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [31]: </span><span class="n">u</span> <span class="o">=</span> <span class="n">mda</span><span class="o">.</span><span class="n">Universe</span><span class="p">(</span><span class="n">PSF</span><span class="p">,</span> <span class="n">DCD</span><span class="p">)</span>
 
