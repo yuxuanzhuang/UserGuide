@@ -10,7 +10,7 @@
     "\n",
     "This document illustrates how you can run your own analysis scripts in parallel with MDAnalysis.\n",
     "\n",
-    "**Last executed:** Aug 25, 2020 with MDAnalysis 2.0.0\n",
+    "**Last executed:** Sep 16, 2020 with MDAnalysis 2.0.0-dev0\n",
     "\n",
     "**Last updated:** August 2020\n",
     "\n",
@@ -47,9 +47,9 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "## Backgroud\n",
+    "## Background\n",
     "\n",
-    "In MDAnalysis, most implemented analysis methods are based on `AnalysisBase`, which provides a generic API for users to <a href=https://mdanalysis.org/UserGuide/examples/analysis/custom_trajectory_analysis.html>write their own trajectory analysis</a>. However, this framework only takes single-core power of the PC by iterating the trajectory and running a frame-wise analysis. Below we aim to first explore some possible simple implementations of parallelism, including using multiprocessing and dask. We will also discuss the acceleration approaches that should be considered ranging from your own multiple-core laptops/desktops to distributed clusters in the HPC center.  "
+    "In MDAnalysis, most implemented analysis methods are based on `AnalysisBase`, which provides a generic API for users to <a href=https://mdanalysis.org/UserGuide/examples/analysis/custom_trajectory_analysis.html>write their own trajectory analysis</a>. However, this framework only takes single-core power of the PC by iterating through the trajectory and running a frame-wise analysis. Below we aim to first explore some possible simple implementations of parallelism, including using multiprocessing and dask. We will also discuss the acceleration approaches that should be considered, ranging from your own multiple-core laptops/desktops to distributed clusters.  \""
    ]
   },
   {
@@ -104,7 +104,7 @@
    "metadata": {},
    "source": [
     "### Radius of gyration\n",
-    "For detail description of this analysis, read [Writing your own trajectory](https://mdanalysis.org/UserGuide/examples/analysis/custom_trajectory_analysis.html).\n",
+    "For a detail description of this analysis, read [Writing your own trajectory](https://mdanalysis.org/UserGuide/examples/analysis/custom_trajectory_analysis.html).\n",
     "\n",
     "Here is a common form of single-frame method that we can normally see inside `AnalysisBase`. It may contain both some dynamic parts that changes along time either implicitly or explicitly (e.g. `AtomGroup`) and some static parts (e.g. a reference frame)."
    ]
@@ -201,7 +201,7 @@
    "source": [
     "### Frame-wise form of the function\n",
     "\n",
-    "First, we need to modify the single-frame method to contain the `frame_index`. Then we explicitly point to the frame that need to be analyzed: `atomgroup.universe.trajectory[frame_index]`. With that, the state of all the dynamic components inside the function will change accordingly (e.g. the position of the `AtomGroup`)"
+    "The coordinates of the ``atomgroup`` analysed change with each frame of the trajectory. We need to explicitly point the analysis function to the frame that needs to be analysed with a ``frame_index``: `atomgroup.universe.trajectory[frame_index]` in order to update the positions (and any other dynamic per-frame information) appropriately. Therefore, the first step to making the ``radgyr`` function parallelisable is to add a ``frame_index`` argument."
    ]
   },
   {
@@ -212,6 +212,7 @@
    "source": [
     "def radgyr_per_frame(frame_index, atomgroup, masses, total_mass=None):\n",
     "    \n",
+    "    # index the trajectory to set it to the frame_index frame\n",
     "    atomgroup.universe.trajectory[frame_index]\n",
     "    \n",
     "    # coordinates change for each frame\n",
@@ -241,11 +242,9 @@
    "source": [
     "### Parallelization with multiprocessing\n",
     "\n",
-    "The native parallel module in python is called [multiprocessing](https://docs.python.org/3/library/multiprocessing.html#module-multiprocessing), it contains some useful tools to build a pool of working cores, map the function into different workers, and gather and order the results from all the workers.\n",
+    "The native parallelisation module in Python is called [multiprocessing](https://docs.python.org/3/library/multiprocessing.html#module-multiprocessing). It contains useful tools to build a pool of working cores, map the function into different workers, and gather and order the results from all the workers.\n",
     "\n",
-    "Below we use `Pool` from `multiprocessing` as a context manager, we can define how many cores (or workers) we want to use by `Pool(n_jobs)`. Then we can map our analysis method `radgyr_per_frame` with the parameters needed with `partial`. Note we do not include `frame_index` inside partial, because `frame_index` is the variable that is iterated to create a list of jobs.\n",
-    "\n",
-    "The downside of `multiprocessing` is that it is mostly focused on single-machine multicore parallelism (without extra manager). It is hard to operate on multimachine conditions (we use `dask` instead) "
+    "Below we use `Pool` from `multiprocessing` as a context manager. We can define how many cores (or workers) we want to use with `Pool(n_jobs)`. "
    ]
   },
   {
@@ -260,17 +259,34 @@
    ]
   },
   {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "We use `functools.partial` to create a new method by supplying every argument needed for `radgyr_per_frame` *except* `frame_index`. We can do this because the `atomgroup`, `masses` etc. will not change when we iterate the function over each frame, but the `frame_index` will. We create a list of jobs where we use the `worker_pool` to map each `frame_index` to each job."
+   ]
+  },
+  {
    "cell_type": "code",
    "execution_count": 9,
    "metadata": {},
    "outputs": [],
    "source": [
+    "run_per_frame = partial(radgyr_per_frame, \n",
+    "                        atomgroup=protein,\n",
+    "                        masses=protein.masses,\n",
+    "                        total_mass=np.sum(protein.masses))\n",
+    "\n",
+    "frame_values = np.arange(u.trajectory.n_frames)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "metadata": {},
+   "outputs": [],
+   "source": [
     "with Pool(n_jobs) as worker_pool:\n",
-    "    result = worker_pool.map(partial(radgyr_per_frame, \n",
-    "                                     atomgroup=protein,\n",
-    "                                     masses=protein.masses,\n",
-    "                                     total_mass=np.sum(protein.masses)),\n",
-    "                             range(u.trajectory.n_frames))"
+    "    result = worker_pool.map(run_per_frame, frame_values)"
    ]
   },
   {
@@ -283,7 +299,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 10,
+   "execution_count": 11,
    "metadata": {},
    "outputs": [
     {
@@ -316,29 +332,30 @@
    "source": [
     "### Parallelization with dask\n",
     "\n",
-    "[Dask](https://docs.dask.org/en/latest/) is a flexible library for parallel computing in Python. It provides advanced parallelism for analytics that has been integrated or utilized in many scientific softwares. It can be scaled from one single computer to a cluster of computers inside a HPC center.\n",
+    "[Dask](https://docs.dask.org/en/latest/) is a flexible library for parallel computing in Python. It provides advanced parallelism for analytics and has been integrated or utilized in many scientific softwares. It can be scaled from one single computer to a cluster of computers inside a HPC center.\n",
     "\n",
-    "It has a dynamic task scheduling system that can be used either in synchronous (single-core), threading, multiprocessing or distributed cluster. The wrapping function in dask, `dask.delayed`, mimics for loops and wraps custom normal python code into a dask graph. Then it can be easily run in parallel, and visualized by `dask.visualize()` to examine if the task is well distributed. To be more precise, the code inside`dask.delayed` will not run immediately but be pushed into a job queue waiting for submission (`compute()` or `persist()`). A more complex dependency can also be built among different jobs, which might be useful for a complex analysis.\n",
+    "Dask has a dynamic task scheduling system with synchronous (single-threaded), threaded, multiprocessing and distributed schedulers. The wrapping function in dask, `dask.delayed`, mimics for loops and wraps Python code into a Dask graph. This code can then be easily run in parallel, and visualized with `dask.visualize()` to examine if the task is well distributed. The code inside `dask.delayed` is not run immediately on execution, but pushed into a job queue waiting for submission. You can read more on [dask website](https://docs.dask.org/en/latest/delayed.html).\n",
     "\n",
-    "Below are two simple examples to use Dask to achieve the same task as `multiprocessing` does.\n",
     "\n",
-    "The API of Dask is similar to `multiprocessing`. It also creates a pool of workers for your single machine with the given resources.\n",
+    "Comaring to `multiprocssing`, the downside of `multiprocessing` is that it is mostly focused on single-machine multicore parallelism (without extra manager). It is hard to operate on multimachine conditions. Below are two simple examples to use Dask to achieve the same task as `multiprocessing` does.\n",
     "\n",
-    "Note: The threaded scheduler in dask (similar to `threading` in python) should not be used as it will mess up with the state (timestep) of the trajectory."
+    "The API of `dask` is similar to `multiprocessing`. It also creates a pool of workers for your single machine with the given resources.\n",
+    "\n",
+    "Note: The threaded scheduler in Dask (similar to `threading` in Python) should not be used as it will mess up with the state (timestep) of the trajectory."
    ]
   },
   {
    "cell_type": "code",
-   "execution_count": 11,
+   "execution_count": 12,
    "metadata": {},
    "outputs": [
     {
      "data": {
       "text/plain": [
-       "<dask.config.set at 0x7f1ae080a670>"
+       "<dask.config.set at 0x7fb8997e8c70>"
       ]
      },
-     "execution_count": 11,
+     "execution_count": 12,
      "metadata": {},
      "output_type": "execute_result"
     }
@@ -362,7 +379,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 12,
+   "execution_count": 13,
    "metadata": {},
    "outputs": [
     {
@@ -373,7 +390,7 @@
        "<td style=\"vertical-align: top; border: 0px solid white\">\n",
        "<h3 style=\"text-align: left;\">Client</h3>\n",
        "<ul style=\"text-align: left; list-style: none; margin: 0; padding: 0;\">\n",
-       "  <li><b>Scheduler: </b>tcp://127.0.0.1:40071</li>\n",
+       "  <li><b>Scheduler: </b>tcp://127.0.0.1:42351</li>\n",
        "  <li><b>Dashboard: </b><a href='http://127.0.0.1:8787/status' target='_blank'>http://127.0.0.1:8787/status</a></li>\n",
        "</ul>\n",
        "</td>\n",
@@ -389,10 +406,10 @@
        "</table>"
       ],
       "text/plain": [
-       "<Client: 'tcp://127.0.0.1:40071' processes=12 threads=12, memory=16.49 GB>"
+       "<Client: 'tcp://127.0.0.1:42351' processes=12 threads=12, memory=16.49 GB>"
       ]
      },
-     "execution_count": 12,
+     "execution_count": 13,
      "metadata": {},
      "output_type": "execute_result"
     }
@@ -413,7 +430,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 13,
+   "execution_count": 14,
    "metadata": {},
    "outputs": [],
    "source": [
@@ -434,7 +451,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 14,
+   "execution_count": 15,
    "metadata": {},
    "outputs": [],
    "source": [
@@ -443,7 +460,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 15,
+   "execution_count": 16,
    "metadata": {},
    "outputs": [
     {
@@ -474,14 +491,14 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "We can also use the old `radgyr` function because `dask` is more flexible on the input args.\n",
+    "We can also use the old `radgyr` function because `dask` is more flexible on the input arguments.\n",
     "\n",
-    "Note: `protein` will change its state during the trajectory iteration, so the processes are always aware which timestep the trajectory is in and change the `protein` (e.g. positions) accordingly."
+    "Note: the associated timestamp of `protein` will change during the trajectory iteration, so the processes are always aware which timestep the trajectory is in and change the `protein` (e.g. its coordinates) accordingly."
    ]
   },
   {
    "cell_type": "code",
-   "execution_count": 16,
+   "execution_count": 17,
    "metadata": {},
    "outputs": [],
    "source": [
@@ -501,7 +518,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 17,
+   "execution_count": 18,
    "metadata": {},
    "outputs": [],
    "source": [
@@ -510,7 +527,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 18,
+   "execution_count": 19,
    "metadata": {},
    "outputs": [
     {
@@ -541,7 +558,7 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "We can also use Dask dashboard (with dask.distributed.Client) to examine how jobs are distributed along all the workers. So each green bar below represents a single-frame `radgyr`."
+    "We can also use Dask dashboard (with dask.distributed.Client) to examine how jobs are distributed along all the workers. Each green bar below represents one job, i.e. running `radgyr` on one frame of the trajectory"
    ]
   },
   {
@@ -563,9 +580,9 @@
    "source": [
     "## Parallelization in a split-apply-combine fashion\n",
     "\n",
-    "The aforementioned per-frame approach should normally be **avoided** because in **each** task, all the attributes (`AtomGroup`, `Universe`, and etc) need to be pickled. This might even takes more time than your lightweight analysis! Besides, e.g. in dask, a huge amount of time is needed overhead to build a comprehensive dask graph with thousands of tasks.\n",
+    "The aforementioned per-frame approach should normally be **avoided** because in **each** task, all the attributes (`AtomGroup`, `Universe`, and etc) need to be pickled. This pickling may take even more time than your lightweight analysis! Besides, in Dask, a significant amount of overhead time is needed to build a comprehensive Dask graph with thousands of tasks.\n",
     "\n",
-    "So a simple split-apply-combine scheme for parallel trajectory analysis should normally be applied (See the figure below)--the trajectory is split into blocks, analysis is performed separately and in parallel on each block (\"apply\"), then results from each block are gathered and combined. \n"
+    "Therefore, we should normally use a split-apply-combine scheme for parallel trajectory analysis. Here, the trajectory is **split** into blocks, analysis is performed separately and in parallel on each block (\\\"apply\\\"), and then results from each block are gathered and **combined**."
    ]
   },
   {
@@ -579,7 +596,7 @@
     "</div>\n",
     "</center>\n",
     "\n",
-    "Image from (<a data-cite=\"fan_pmda_2019\" href=\"https://doi.org/10.25080/Majora-7ddc1dd1-013\">Fan et al., 2019</a>) used under CC-BY license."
+    "Image from (<a data-cite=\"fan_pmda_2019\" href=\"https://doi.org/10.25080/Majora-7ddc1dd1-013\">Shujie *et al.*, 2019</a>) used under CC-BY license."
    ]
   },
   {
@@ -597,8 +614,15 @@
    ]
   },
   {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "`@dask.delayed` is a common syntax to decorate a function into delayed-enabled. It is the same as delaying the function by `dask.delayed(analyze_block)(bs, radgyr, ...)` later on."
+   ]
+  },
+  {
    "cell_type": "code",
-   "execution_count": 19,
+   "execution_count": 20,
    "metadata": {},
    "outputs": [],
    "source": [
@@ -622,26 +646,28 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "This is a very simple way to split the trajectory, sometime it is not really balanced (e.g. the last block)."
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 20,
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "n_frames = u.trajectory.n_frames\n",
-    "n_blocks = n_jobs   #  it can be any realistic value (0<n_blocks<=n_jobs)\n",
+    "This is a very simple way to split the trajectory. It splits the trajectory into defined `n_blocks` which is normally the same as the number of cores you want to use.\n",
     "\n",
-    "frame_per_block = n_frames // n_blocks\n",
-    "blocks = [range(i * frame_per_block, (i + 1) * frame_per_block) for i in range(n_blocks-1)]\n",
-    "blocks.append(range((n_blocks - 1) * frame_per_block, n_frames))"
+    "Since it is achieved by evenly dividing the `n_frames` by `n_blocks`, and setting the last block to end at the last frame, sometime it is not really balanced (e.g. the last block)."
    ]
   },
   {
    "cell_type": "code",
    "execution_count": 21,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "n_frames = u.trajectory.n_frames\n",
+    "n_blocks = n_jobs   #  it can be any realistic value (0 < n_blocks <= n_jobs)\n",
+    "\n",
+    "n_frames_per_block = n_frames // n_blocks\n",
+    "blocks = [range(i * n_frames_per_block, (i + 1) * n_frames_per_block) for i in range(n_blocks-1)]\n",
+    "blocks.append(range((n_blocks - 1) * n_frames_per_block, n_frames))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 22,
    "metadata": {},
    "outputs": [
     {
@@ -661,7 +687,7 @@
        " range(3828, 4187)]"
       ]
      },
-     "execution_count": 21,
+     "execution_count": 22,
      "metadata": {},
      "output_type": "execute_result"
     }
@@ -679,13 +705,17 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 22,
+   "execution_count": 23,
    "metadata": {},
    "outputs": [],
    "source": [
     "jobs = []\n",
     "for bs in blocks:\n",
-    "    jobs.append(analyze_block(bs, radgyr, protein, protein.masses, total_mass=np.sum(protein.masses)))\n",
+    "    jobs.append(analyze_block(bs,\n",
+    "                              radgyr,\n",
+    "                              protein,\n",
+    "                              protein.masses,\n",
+    "                              total_mass=np.sum(protein.masses)))\n",
     "jobs = dask.delayed(jobs)"
    ]
   },
@@ -693,12 +723,12 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "By `visualize()` we can confirm that the trajectory is split into a few blocks instead of ~4000 jobs."
+    "Using `visualize()` we can see that the trajectory is split into a few blocks instead of ~4000 jobs."
    ]
   },
   {
    "cell_type": "code",
-   "execution_count": 23,
+   "execution_count": 24,
    "metadata": {},
    "outputs": [
     {
@@ -708,7 +738,7 @@
        "<IPython.core.display.Image object>"
       ]
      },
-     "execution_count": 23,
+     "execution_count": 24,
      "metadata": {},
      "output_type": "execute_result"
     }
@@ -719,7 +749,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 24,
+   "execution_count": 25,
    "metadata": {},
    "outputs": [],
    "source": [
@@ -735,7 +765,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 25,
+   "execution_count": 26,
    "metadata": {},
    "outputs": [],
    "source": [
@@ -744,7 +774,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 26,
+   "execution_count": 27,
    "metadata": {},
    "outputs": [
     {
@@ -775,7 +805,7 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "If you look at the Dask dashboard (with dask.distributed.Client) this time, you will see each green bar below reprsents a per-block analysis for `radgyr`."
+    "If you look at the Dask dashboard (with dask.distributed.Client) this time, you will see each green bar below represents a per-block analysis for `radgyr`."
    ]
   },
   {
@@ -797,14 +827,14 @@
    "source": [
     "## Other possible parallelism approaches for multiple analyses\n",
     "\n",
-    "In real life, you may also want to perform multiple analyses (or analyzing multiple trajectories), you can use some high-level parallelism, i.e. running all the serial analyses in parallel.\n",
+    "You may want to perform multiple analyses (or analyze multiple trajectories). In this case, you can use some high-level parallelism, i.e. running all the serial analyses in parallel.\n",
     "\n",
-    "Here we use [joblib](https://joblib.readthedocs.io/en/latest/). It is implemented on `multiprocessing` and provides lightweight pipelining in Python. Comparing to `multiprocessing`, it has a simple API and convenient persistence of cached results."
+    "Here we use [joblib](https://joblib.readthedocs.io/en/latest/). It is implemented on `multiprocessing` and provides lightweight pipelining in Python. Compared to `multiprocessing`, it has a simple API and convenient persistence of cached results.\""
    ]
   },
   {
    "cell_type": "code",
-   "execution_count": 27,
+   "execution_count": 28,
    "metadata": {},
    "outputs": [],
    "source": [
@@ -814,14 +844,12 @@
    ]
   },
   {
-   "cell_type": "code",
-   "execution_count": 28,
+   "cell_type": "markdown",
    "metadata": {},
-   "outputs": [],
    "source": [
-    "def run_analysis(analysis):\n",
-    "    analysis.run()\n",
-    "    return analysis.results"
+    "Here we leverage the power of `AnalysisFromFunction` to fast construct a class that will iterate through the trajectory and save the analysis results.\n",
+    "\n",
+    "If you want to know more about how `AnalysisFromFunction` works, you can read it from [Writing your own trajectory](https://mdanalysis.org/UserGuide/examples/analysis/custom_trajectory_analysis.html)."
    ]
   },
   {
@@ -830,8 +858,6 @@
    "metadata": {},
    "outputs": [],
    "source": [
-    "# https://userguide.mdanalysis.org/1.0.0/examples/analysis/custom_trajectory_analysis.html#Creating-an-analysis-from-a-function\n",
-    "\n",
     "from MDAnalysis.analysis.base import AnalysisFromFunction "
    ]
   },
@@ -861,8 +887,35 @@
    ]
   },
   {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "`run_analysis` is a simple way to run the analysis and retrieve the results."
+   ]
+  },
+  {
    "cell_type": "code",
    "execution_count": 31,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def run_analysis(analysis):\n",
+    "    analysis.run()\n",
+    "    return analysis.results"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "The `joblib.delayed` is different from `dask.delayed`; it cannot be used as a \"pie\" syntax (`@joblib.delayed`), so you have to use it as below.\n",
+    "\n",
+    "Similiar to `dask.delayed`, the code inside `joblib.delayed` will not run immediately but be pushed into a job queue waiting for processing. In this case, `run_anlaysis()` is processed by `Parallel` with defined number of workers--`n_jobs`."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 32,
    "metadata": {},
    "outputs": [],
    "source": [
@@ -871,8 +924,15 @@
    ]
   },
   {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "The `results_ensemble` will be a list of `results` that is returned from `run_analysis`. You can further split and process each analysis."
+   ]
+  },
+  {
    "cell_type": "code",
-   "execution_count": 32,
+   "execution_count": 33,
    "metadata": {},
    "outputs": [
     {
@@ -905,7 +965,37 @@
    "source": [
     "## See Also\n",
     "\n",
-    "The parallel version of MDAnalysis is still under development. For existing solution and some implemented parallel analysis, go to [PMDA](https://www.mdanalysis.org/pmda/). PMDA (<a data-cite=\"fan_pmda_2019\" href=\"https://doi.org/10.25080/Majora-7ddc1dd1-013\">Fan *et al.*, 2019</a>) applies the aforementioned split-apply-combine scheme with dask. In the future, it may provide a framework that consolidates all the mentioned parallel conditions."
+    "The parallel version of MDAnalysis is still under development. For existing solutions and some implementations of parallel analysis, go to [PMDA](https://www.mdanalysis.org/pmda/). PMDA (<a data-cite=\\\"fan_pmda_2019\\\" href=\\\"https://doi.org/10.25080/Majora-7ddc1dd1-013\\\">Shujie *et al.*, 2019</a>) applies the aforementioned split-apply-combine scheme with Dask. In the future, it may provide a framework that consolidates all the parallelisation schemes described in this tutorial.\""
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## References\n",
+    "\n",
+    "[1] Oliver Beckstein, Elizabeth&nbsp;J. Denning, Juan&nbsp;R. Perilla, and Thomas&nbsp;B. Woolf.\n",
+    "Zipping and <span class=\"bibtex-protected\">Unzipping</span> of <span class=\"bibtex-protected\">Adenylate</span> <span class=\"bibtex-protected\">Kinase</span>: <span class=\"bibtex-protected\">Atomistic</span> <span class=\"bibtex-protected\">Insights</span> into the <span class=\"bibtex-protected\">Ensemble</span> of <span class=\"bibtex-protected\">Open</span>↔<span class=\"bibtex-protected\">Closed</span> <span class=\"bibtex-protected\">Transitions</span>.\n",
+    "<em>Journal of Molecular Biology</em>, 394(1):160–176, November 2009.\n",
+    "00107.\n",
+    "URL: <a href=\"https://linkinghub.elsevier.com/retrieve/pii/S0022283609011164\">https://linkinghub.elsevier.com/retrieve/pii/S0022283609011164</a>, <a href=\"https://doi.org/10.1016/j.jmb.2009.09.009\">doi:10.1016/j.jmb.2009.09.009</a>.\n",
+    "\n",
+    "[2] Richard&nbsp;J. Gowers, Max Linke, Jonathan Barnoud, Tyler J.&nbsp;E. Reddy, Manuel&nbsp;N. Melo, Sean&nbsp;L. Seyler, Jan Domański, David&nbsp;L. Dotson, Sébastien Buchoux, Ian&nbsp;M. Kenney, and Oliver Beckstein.\n",
+    "<span class=\"bibtex-protected\">MDAnalysis</span>: <span class=\"bibtex-protected\">A</span> <span class=\"bibtex-protected\">Python</span> <span class=\"bibtex-protected\">Package</span> for the <span class=\"bibtex-protected\">Rapid</span> <span class=\"bibtex-protected\">Analysis</span> of <span class=\"bibtex-protected\">Molecular</span> <span class=\"bibtex-protected\">Dynamics</span> <span class=\"bibtex-protected\">Simulations</span>.\n",
+    "<em>Proceedings of the 15th Python in Science Conference</em>, pages 98–105, 2016.\n",
+    "00152.\n",
+    "URL: <a href=\"https://conference.scipy.org/proceedings/scipy2016/oliver_beckstein.html\">https://conference.scipy.org/proceedings/scipy2016/oliver_beckstein.html</a>, <a href=\"https://doi.org/10.25080/Majora-629e541a-00e\">doi:10.25080/Majora-629e541a-00e</a>.\n",
+    "\n",
+    "[3] Naveen Michaud-Agrawal, Elizabeth&nbsp;J. Denning, Thomas&nbsp;B. Woolf, and Oliver Beckstein.\n",
+    "<span class=\"bibtex-protected\">MDAnalysis</span>: <span class=\"bibtex-protected\">A</span> toolkit for the analysis of molecular dynamics simulations.\n",
+    "<em>Journal of Computational Chemistry</em>, 32(10):2319–2327, July 2011.\n",
+    "00778.\n",
+    "URL: <a href=\"http://doi.wiley.com/10.1002/jcc.21787\">http://doi.wiley.com/10.1002/jcc.21787</a>, <a href=\"https://doi.org/10.1002/jcc.21787\">doi:10.1002/jcc.21787</a>.\n",
+    "\n",
+    "[4] Max&nbsp;Linke Shujie&nbsp;Fan, Ioannis Paraskevakos, Richard&nbsp;J. Gowers, Michael Gecht, and Oliver Beckstein.\n",
+    "<span class=\"bibtex-protected\">PMDA</span> - <span class=\"bibtex-protected\">P</span>arallel <span class=\"bibtex-protected\">M</span>olecular <span class=\"bibtex-protected\">D</span>ynamics <span class=\"bibtex-protected\">A</span>nalysis.\n",
+    "In <span class=\"bibtex-protected\">C</span>hris <span class=\"bibtex-protected\">C</span>alloway, <span class=\"bibtex-protected\">D</span>avid <span class=\"bibtex-protected\">L</span>ippa, <span class=\"bibtex-protected\">D</span>illon <span class=\"bibtex-protected\">N</span>iederhut, and <span class=\"bibtex-protected\">D</span>avid <span class=\"bibtex-protected\">S</span>hupe, editors, <em><span class=\"bibtex-protected\">P</span>roceedings of the 18th <span class=\"bibtex-protected\">P</span>ython in <span class=\"bibtex-protected\">S</span>cience <span class=\"bibtex-protected\">C</span>onference</em>, 134 &ndash; 142. 2019.\n",
+    "<a href=\"https://doi.org/10.25080/Majora-7ddc1dd1-013\">doi:10.25080/Majora-7ddc1dd1-013</a>."
    ]
   }
  ],
